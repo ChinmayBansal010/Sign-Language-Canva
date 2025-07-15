@@ -9,7 +9,7 @@ import math
 LABEL = "J"
 VARIATION = "fast"
 DATASET_PATH = "sequence_dataset"
-NUM_SAMPLES = 10                # 🔁 Change this only!
+NUM_SAMPLES = 10                
 SEQUENCE_LENGTH = 40
 FPS = 20
 

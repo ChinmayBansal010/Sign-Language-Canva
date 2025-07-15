@@ -1,15 +1,22 @@
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from tensorflow.keras import Input
 
+
+# Constants
 DATASET_PATH = "sequence_dataset"
 SEQUENCE_LENGTH = 40
 INPUT_DIM = 126  # 63 normalized + 63 velocity
 VARIATIONS = ["normal", "fast", "slow", "tilted"]
-LABELS = ['I','J']
+LABELS = ['A', 'B', 'C', 'D', 'E', 'I', 'J']
 label_map = {label: i for i, label in enumerate(LABELS)}
 
 # Step 1: Load all data
@@ -33,7 +40,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=
 
 # Step 3: Build model
 model = Sequential([
-    LSTM(128, return_sequences=True, input_shape=(SEQUENCE_LENGTH, INPUT_DIM)),
+    Input(shape=(SEQUENCE_LENGTH, INPUT_DIM)),
+    LSTM(128, return_sequences=True),
     Dropout(0.4),
     LSTM(64),
     Dropout(0.3),
@@ -48,3 +56,19 @@ model.fit(X_train, y_train, epochs=30, validation_data=(X_test, y_test), batch_s
 
 # Step 5: Save model
 model.save("sign_lstm_full.keras")
+
+# Step 6: Confusion Matrix
+# Get predictions
+y_pred = model.predict(X_test)
+y_pred_classes = np.argmax(y_pred, axis=1)
+y_true_classes = np.argmax(y_test, axis=1)
+
+# Compute confusion matrix
+cm = confusion_matrix(y_true_classes, y_pred_classes)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=LABELS)
+
+# Plot
+plt.figure(figsize=(8, 6))
+disp.plot(cmap='Blues', values_format='d')
+plt.title("Confusion Matrix")
+plt.show()

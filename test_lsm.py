@@ -10,7 +10,7 @@ import pyttsx3
 # Configs
 SEQUENCE_LENGTH = 40
 INPUT_DIM = 126
-LABELS = ['I','J']
+LABELS = ['A','B','C','D','E','I','J']
 CONFIDENCE_THRESHOLD = 0.95
 model = load_model("sign_lstm_full.keras")
 
